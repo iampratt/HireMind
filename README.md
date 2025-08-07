@@ -2,6 +2,8 @@
 
 A React TypeScript frontend for the HireMind job search platform, fully integrated with the backend API.
 
+## Backend - https://github.com/iampratt/HireMind-Backend.git
+
 ## Features
 
 - **Authentication**: Sign up, login, and profile management
