@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:3000/api';
+const API_BASE_URL = 'http://35.154.168.107/api';
 
 interface ApiResponse<T = unknown> {
   success: boolean;
