@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Upload, Search, FileText, TrendingUp, Clock, Star } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Upload, Search, FileText, TrendingUp, Clock, Star, User } from 'lucide-react';
 import { Card } from '../UI/Card';
 import { Button } from '../UI/Button';
 import { LoadingSpinner } from '../UI/LoadingSpinner';
@@ -7,7 +8,7 @@ import { apiService } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface DashboardProps {
-  onNavigate: (screen: string) => void;
+  showToast: (message: string, type: 'success' | 'error' | 'info') => void;
 }
 
 interface DashboardStats {
@@ -17,8 +18,9 @@ interface DashboardStats {
   lastActivity: string;
 }
 
-export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
+export const Dashboard: React.FC<DashboardProps> = ({ showToast }) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [stats, setStats] = useState<DashboardStats>({
     resumeCount: 0,
     jobSearchCount: 0,
@@ -75,21 +77,21 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
       title: 'Upload New Resume',
       description: 'Upload and analyze your resume with AI',
       icon: Upload,
-      action: () => onNavigate('upload'),
+      action: () => navigate('/upload'),
       color: 'blue'
     },
     {
       title: 'Search Jobs',
       description: 'Find jobs that match your profile',
       icon: Search,
-      action: () => onNavigate('jobs'),
+      action: () => navigate('/jobs'),
       color: 'green'
     },
     {
-      title: 'AI Recommendations',
-      description: 'Get personalized job recommendations',
-      icon: Star,
-      action: () => onNavigate('jobs'),
+      title: 'View Profile',
+      description: 'View your professional profile',
+      icon: User,
+      action: () => navigate('/profile'),
       color: 'purple'
     }
   ];
@@ -229,7 +231,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                 No recent activity. Upload your first resume to get started!
               </p>
               <Button 
-                onClick={() => onNavigate('upload')}
+                onClick={() => navigate('/upload')}
                 className="mt-4"
               >
                 Upload Resume

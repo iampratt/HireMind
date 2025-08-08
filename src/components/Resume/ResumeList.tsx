@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FileText, Trash2, RefreshCw, Eye, Calendar, User } from 'lucide-react';
 import { Card } from '../UI/Card';
 import { Button } from '../UI/Button';
@@ -8,15 +9,14 @@ import { Resume } from '../../types';
 
 interface ResumeListProps {
   showToast: (message: string, type: 'success' | 'error' | 'info') => void;
-  onNavigate: (screen: string) => void;
 }
 
-export const ResumeList: React.FC<ResumeListProps> = ({ showToast, onNavigate }) => {
+export const ResumeList: React.FC<ResumeListProps> = ({ showToast }) => {
+  const navigate = useNavigate();
   const [resumes, setResumes] = useState<Resume[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [reparsingId, setReparsingId] = useState<string | null>(null);
-  const [selectedResume, setSelectedResume] = useState<Resume | null>(null);
 
   useEffect(() => {
     fetchResumes();
@@ -165,7 +165,7 @@ export const ResumeList: React.FC<ResumeListProps> = ({ showToast, onNavigate })
             Manage and view your uploaded resumes
           </p>
         </div>
-        <Button onClick={() => onNavigate('upload')}>
+        <Button onClick={() => navigate('/upload')}>
           Upload New Resume
         </Button>
       </div>
@@ -179,7 +179,7 @@ export const ResumeList: React.FC<ResumeListProps> = ({ showToast, onNavigate })
           <p className="text-gray-600 dark:text-gray-400 mb-6">
             Upload your first resume to get started with job matching
           </p>
-          <Button onClick={() => onNavigate('upload')}>
+          <Button onClick={() => navigate('/upload')}>
             Upload Resume
           </Button>
         </Card>
@@ -204,7 +204,7 @@ export const ResumeList: React.FC<ResumeListProps> = ({ showToast, onNavigate })
                   <Button
                     variant="secondary"
                     size="sm"
-                    onClick={() => setSelectedResume(resume)}
+                    onClick={() => navigate(`/resumes/${resume.id}`)}
                   >
                     <Eye className="h-4 w-4" />
                   </Button>
@@ -274,14 +274,14 @@ export const ResumeList: React.FC<ResumeListProps> = ({ showToast, onNavigate })
                 <Button
                   variant="secondary"
                   size="sm"
-                  onClick={() => onNavigate('jobs')}
+                  onClick={() => navigate('/jobs')}
                   className="flex-1"
                 >
                   Search Jobs
                 </Button>
                 <Button
                   size="sm"
-                  onClick={() => onNavigate('jobs')}
+                  onClick={() => navigate('/jobs')}
                   className="flex-1"
                 >
                   Get Recommendations
@@ -292,126 +292,7 @@ export const ResumeList: React.FC<ResumeListProps> = ({ showToast, onNavigate })
         </div>
       )}
 
-      {/* Resume Detail Modal */}
-      {selectedResume && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  Resume Details
-                </h2>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => setSelectedResume(null)}
-                >
-                  Close
-                </Button>
-              </div>
 
-              <div className="space-y-6">
-                {/* Contact Information */}
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">
-                    Contact Information
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Email:</span>
-                      <p className="text-gray-900 dark:text-white">{selectedResume.extractedData.contact.email || 'Not found'}</p>
-                    </div>
-                    <div>
-                      <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Phone:</span>
-                      <p className="text-gray-900 dark:text-white">{selectedResume.extractedData.contact.phone || 'Not found'}</p>
-                    </div>
-                    <div>
-                      <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Location:</span>
-                      <p className="text-gray-900 dark:text-white">{selectedResume.extractedData.contact.location || 'Not found'}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Skills */}
-                {selectedResume.extractedData.skills.length > 0 && (
-                  <div>
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">
-                      Skills
-                    </h3>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedResume.extractedData.skills.map((skill, index) => (
-                        <span
-                          key={index}
-                          className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Summary */}
-                {selectedResume.extractedData.summary && (
-                  <div>
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">
-                      Summary
-                    </h3>
-                    <p className="text-gray-700 dark:text-gray-300">
-                      {selectedResume.extractedData.summary}
-                    </p>
-                  </div>
-                )}
-
-                {/* Experience */}
-                {selectedResume.extractedData.experience.length > 0 && (
-                  <div>
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">
-                      Experience
-                    </h3>
-                    <div className="space-y-4">
-                      {selectedResume.extractedData.experience.map((exp, index) => (
-                        <div key={index} className="border-l-4 border-blue-500 pl-4">
-                          <h4 className="font-medium text-gray-900 dark:text-white">
-                            {exp.position} at {exp.company}
-                          </h4>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                            {exp.duration}
-                          </p>
-                          <p className="text-gray-700 dark:text-gray-300 text-sm">
-                            {exp.description}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Education */}
-                {selectedResume.extractedData.education.length > 0 && (
-                  <div>
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">
-                      Education
-                    </h3>
-                    <div className="space-y-3">
-                      {selectedResume.extractedData.education.map((edu, index) => (
-                        <div key={index}>
-                          <h4 className="font-medium text-gray-900 dark:text-white">
-                            {edu.degree}
-                          </h4>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">
-                            {edu.institution} • {edu.year}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }; 

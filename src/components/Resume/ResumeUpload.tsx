@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Upload, RefreshCw, CheckCircle } from 'lucide-react';
 import { apiService } from '../../services/api';
 import { Resume } from '../../types';
@@ -8,7 +9,6 @@ import { LoadingSpinner } from '../UI/LoadingSpinner';
 
 interface ResumeUploadProps {
   showToast: (message: string, type: 'success' | 'error' | 'info') => void;
-  onNavigate: (screen: string) => void;
 }
 
 interface ExperienceData {
@@ -24,7 +24,8 @@ interface EducationData {
   years?: string;
 }
 
-export const ResumeUpload: React.FC<ResumeUploadProps> = ({ showToast, onNavigate }) => {
+export const ResumeUpload: React.FC<ResumeUploadProps> = ({ showToast }) => {
+  const navigate = useNavigate();
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedResume, setUploadedResume] = useState<Resume | null>(null);
   const [isReparsing, setIsReparsing] = useState(false);
@@ -253,7 +254,7 @@ export const ResumeUpload: React.FC<ResumeUploadProps> = ({ showToast, onNavigat
                 <Button
                   variant="secondary"
                   size="sm"
-                  onClick={() => onNavigate('resumes')}
+                  onClick={() => navigate('/resumes')}
                 >
                   View All Resumes
                 </Button>
@@ -369,7 +370,7 @@ export const ResumeUpload: React.FC<ResumeUploadProps> = ({ showToast, onNavigat
           {/* Action Buttons */}
           <div className="flex justify-center space-x-4">
             <Button
-              onClick={() => onNavigate('jobs')}
+              onClick={() => navigate('/jobs')}
               className="px-8"
             >
               Search Jobs

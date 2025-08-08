@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { AuthScreen } from './components/Auth/AuthScreen';
@@ -7,24 +8,20 @@ import { Dashboard } from './components/Dashboard/Dashboard';
 import { ResumeUpload } from './components/Resume/ResumeUpload';
 import { JobSearch } from './components/Jobs/JobSearch';
 import { ResumeList } from './components/Resume/ResumeList';
+import { Profile } from './components/Profile/Profile';
+import { ResumeDetail } from './components/Resume/ResumeDetail';
 import { ToastContainer } from './components/UI/Toast';
 import { useToast } from './hooks/useToast';
-import { Screen } from './types';
 
 function AppContent() {
   const { user } = useAuth();
-  const [currentScreen, setCurrentScreen] = useState<Screen>('dashboard');
   const { toasts, showToast, removeToast } = useToast();
-
-  const handleNavigate = (screen: string) => {
-    setCurrentScreen(screen as Screen);
-  };
 
   if (!user) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <AuthScreen 
-          onSuccess={() => setCurrentScreen('dashboard')} 
+          onSuccess={() => {}} 
           showToast={showToast}
         />
         <ToastContainer toasts={toasts} onRemove={removeToast} />
@@ -32,26 +29,20 @@ function AppContent() {
     );
   }
 
-  const renderCurrentScreen = () => {
-    switch (currentScreen) {
-      case 'dashboard':
-        return <Dashboard onNavigate={handleNavigate} />;
-      case 'upload':
-        return <ResumeUpload showToast={showToast} onNavigate={handleNavigate} />;
-      case 'jobs':
-        return <JobSearch showToast={showToast} />;
-      case 'resumes':
-        return <ResumeList showToast={showToast} onNavigate={handleNavigate} />;
-      default:
-        return <Dashboard onNavigate={handleNavigate} />;
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Header onNavigate={handleNavigate} currentScreen={currentScreen} />
+      <Header showToast={showToast} />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {renderCurrentScreen()}
+        <Routes>
+          <Route path="/" element={<Dashboard showToast={showToast} />} />
+          <Route path="/upload" element={<ResumeUpload showToast={showToast} />} />
+          <Route path="/jobs" element={<JobSearch showToast={showToast} />} />
+          <Route path="/resumes" element={<ResumeList showToast={showToast} />} />
+          <Route path="/resumes/:resumeId" element={<ResumeDetail showToast={showToast} />} />
+          <Route path="/profile" element={<Profile showToast={showToast} />} />
+          <Route path="/profile/:profileId" element={<Profile showToast={showToast} />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </main>
       <ToastContainer toasts={toasts} onRemove={removeToast} />
     </div>
@@ -60,11 +51,13 @@ function AppContent() {
 
 function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
-    </ThemeProvider>
+    <Router>
+      <ThemeProvider>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </ThemeProvider>
+    </Router>
   );
 }
 

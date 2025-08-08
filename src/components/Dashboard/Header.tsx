@@ -1,25 +1,28 @@
 import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Brain, User, Settings, LogOut, Moon, Sun, Menu, X } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { Button } from '../UI/Button';
 
 interface HeaderProps {
-  onNavigate: (screen: string) => void;
-  currentScreen: string;
+  showToast: (message: string, type: 'success' | 'error' | 'info') => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onNavigate, currentScreen }) => {
+export const Header: React.FC<HeaderProps> = ({ showToast }) => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { theme, toggleTheme } = useTheme();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard' },
-    { id: 'upload', label: 'Upload Resume' },
-    { id: 'jobs', label: 'Find Jobs' },
-    { id: 'resumes', label: 'My Resumes' }
+    { id: '/', label: 'Dashboard' },
+    { id: '/upload', label: 'Upload Resume' },
+    { id: '/jobs', label: 'Find Jobs' },
+    { id: '/resumes', label: 'My Resumes' },
+    { id: '/profile', label: 'Profile' }
   ];
 
   return (
@@ -37,10 +40,10 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, currentScreen }) => 
             {navItems.map(item => (
               <button
                 key={item.id}
-                onClick={() => onNavigate(item.id)}
+                onClick={() => navigate(item.id)}
                 className={`
                   px-3 py-2 text-sm font-medium rounded-md transition-all duration-200
-                  ${currentScreen === item.id
+                  ${location.pathname === item.id
                     ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
                     : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700'
                   }
@@ -128,12 +131,12 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, currentScreen }) => 
               <button
                 key={item.id}
                 onClick={() => {
-                  onNavigate(item.id);
+                  navigate(item.id);
                   setShowMobileMenu(false);
                 }}
                 className={`
                   block w-full text-left px-3 py-2 text-sm font-medium rounded-md transition-colors
-                  ${currentScreen === item.id
+                  ${location.pathname === item.id
                     ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
                     : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700'
                   }

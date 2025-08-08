@@ -70,4 +70,3 @@ export interface JobFilters {
 
 export type Theme = 'dark' | 'light';
 
-export type Screen = 'auth' | 'dashboard' | 'upload' | 'jobs' | 'resumes' | 'job-detail';
